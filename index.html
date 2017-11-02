@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>recording</title>
+</head>
+<body>
+    <h2>recording</h2>
+    <img src="" id="test">
+    <script>
+        const {desktopCapturer, remote, clipboard} = require('electron');
+        const toBuffer = require('blob-to-buffer');
+        const fs = require('fs');
+        const win = remote.getCurrentWindow();
+        const bounds = win.getBounds();
+        let chunks = null;
+
+        console.error(win);
+
+        setTimeout(() => {
+            win.capturePage(image => {
+                const url = image.toDataURL();
+                console.error(url);
+                document.getElementById('test').src = url;
+                console.error('찰칵');
+            });
+        }, 5000);
+        /*
+        desktopCapturer.getSources({types: ['window']}, (error, sources) => {
+            if (error) {
+                console.error(error);
+                return;
+            }
+            let source = null;
+            for (let i = 0; i < sources.length; i++) {
+                if (sources[i].name === 'recording') {
+                    source = sources[i];
+                }
+            }
+            if (source !== null) {
+                const sourceId = source.id;
+                console.error(sourceId);
+
+                navigator.mediaDevices.getUserMedia({
+                    audio: false,
+                    video: {
+                        mandatory: {
+                            chromeMediaSource: 'desktop',
+                            chromeMediaSourceId: sourceId,
+                            minWidth: bounds.width,
+                            maxWidth: bounds.width,
+                            minHeight: bounds.height,
+                            maxHeight: bounds.height
+                        }
+                    }
+                }).then((stream) => {
+                    console.error(stream);
+
+                    const mediaRecorder = new MediaRecorder(stream, {mimeType : 'video/webm;codecs=vp9'});
+
+                    mediaRecorder.onstart = () => {
+                        console.error('start');
+                        chunks = [];
+                    };
+
+                    mediaRecorder.ondataavailable = e => {
+                        console.error('ondataavailable');
+                        chunks.push(e.data);
+                    };
+
+                    mediaRecorder.onstop = () => {
+                        console.error('stop');
+                        const blob = new Blob(chunks, {type: 'video/webm;codecs=vp9'});
+                        toBuffer(blob, (err, buffer) => {
+                            if (err) {
+                                console.error(err);
+                                return;
+                            }
+                            fs.writeFileSync('/Users/mark/Desktop/test.webm', buffer);
+                        });
+                    };
+
+                    mediaRecorder.start();
+                    setTimeout(() => {
+                        mediaRecorder.stop();
+                    }, 5000);
+                });
+            }
+        });
+        */
+    </script>
+</body>
+</html>
